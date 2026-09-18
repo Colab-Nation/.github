@@ -1,0 +1,27 @@
+name: Auto Assign Issues & PRs
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  auto_assign:
+    name: Assign Maintainer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-assign Maintainer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const isIssue = !!context.payload.issue;
+            const issueNumber = isIssue ? context.payload.issue.number : context.payload.pull_request.number;
+            const assignees = ['chilkotiKartik'];
+            
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              assignees: assignees
+            });
